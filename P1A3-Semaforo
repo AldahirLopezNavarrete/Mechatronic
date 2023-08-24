@@ -1,13 +1,14 @@
 #define LUZVERDE1 1
 #define LUZAMARILLA1 3
 #define LUZROJA1 21
-#define LUZVERDE2 15
-#define LUZAMARILLA2 2
-#define LUZROJA2 4
+#define LUZVERDE2 2
+#define LUZAMARILLA2 4
+#define LUZROJA2 16
 
 //SEMAFORO 1 ES ARRIBA Y SEMAFORO 2 ES ABAJO
 void setup() {
   // put your setup code here, to run once:
+//Definimos todas las salidas
 pinMode(LUZVERDE1,OUTPUT);      
 pinMode(LUZAMARILLA1,OUTPUT);
 pinMode(LUZROJA1,OUTPUT);
@@ -18,7 +19,7 @@ pinMode(LUZROJA2,OUTPUT);
 void loop() {
   // put your main code here, to run repeatedly:
 digitalWrite(LUZROJA1,HIGH); //Enciende la luz roja del semaforo 1
-digitalWrite(LUZVERDE2,HIGH); //Enciende la luz verde del semaforo 1
+digitalWrite(LUZVERDE2,HIGH); //Enciende la luz verde del semaforo 2
 delay(5000);  //Espera 5 segundos
 digitalWrite(LUZVERDE2,LOW); //Apaga la luz verde del semaforo 2
 digitalWrite(LUZAMARILLA2,HIGH); //Enciende la luz amarilla del semaforo 2
@@ -31,4 +32,5 @@ delay(5000); //Espera 5 segundos
 digitalWrite(LUZVERDE1,LOW); //Apaga la luz verde del semaforo 1
 digitalWrite(LUZAMARILLA1,HIGH); //Enciende la luz amarilla del semaforo 1
 delay(1000);
+digitalWrite(LUZAMARILLA1,LOW);1
 }
