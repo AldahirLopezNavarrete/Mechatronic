@@ -32,5 +32,6 @@ delay(5000); //Espera 5 segundos
 digitalWrite(LUZVERDE1,LOW); //Apaga la luz verde del semaforo 1
 digitalWrite(LUZAMARILLA1,HIGH); //Enciende la luz amarilla del semaforo 1
 delay(1000);
-digitalWrite(LUZAMARILLA1,LOW);
+digitalWrite(LUZAMARILLA1,LOW); //Apaga la luz amarilla del semaforo 1
+digitalWrite(LUZROJA2,LOW); //Apaga la luz roja del semaforo 2
 }
