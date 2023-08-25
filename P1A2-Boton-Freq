@@ -9,12 +9,12 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   estadoBTN=digitalRead(BOTON);   //Boolean (True o False)
-  if(estadoBTN==true){
-    Serial.println("Presionado");
-    delay(100);
+  if(estadoBTN==true){  //Corroborar si el boton esta siendo presionado
+    Serial.println("Presionado");  //Al momento de presionar el boton, aparecera la palabra 'presionado' en el monitor serial
+    delay(100);  //Espera 0.1 segundos
   }
   else{
-    Serial.println("Sin presionar");
-    delay(100);
+    Serial.println("Sin presionar");  //Si no se presiona nada, el monitor serial repite 'Sin presionar'
+    delay(100);  //Espera 0.1 segundos
   }
 }
