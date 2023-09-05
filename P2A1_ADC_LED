@@ -1,14 +1,22 @@
 //Aldahir Lopez, Gustavo Escobar
 #define Pot 4  //Potenciometro(Puerto 4 - Azul)
+#define LED 2  //Luz azul de ESP-32
 int val;
 
 //Objetivo: Leer el valor del potencionmetro
 void setup() {
+  pinMode(LED,OUTPUT);
   Serial.begin(115200);
 }
 
 void loop() {
   val=analogRead(Pot); //El valor que vamos a leer del potenciometro se guarda en la variable val
+  volt=(val*3.3)/4095; //Valor del voltaje
   Serial.println("Valor: "+val); //Imprime el valor del potenciometro
   delay(100); 
+  if(volt>=2.2){
+    digitalWrite(LED,HIGH); //Si el voltaje es mayor o igual a 2.2, prende el led
+  }else{
+    digitalWrite(LED,LOW);  //Si el voltaje es menor a 2.2 entonces el led se mantiene apagado
+  }
 }
