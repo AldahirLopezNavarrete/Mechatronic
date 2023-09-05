@@ -1,0 +1,14 @@
+//Aldahir Lopez, Gustavo Escobar
+#define Pot 4  //Potenciometro(Puerto 4 - Azul)
+int val;
+
+//Objetivo: Leer el valor del potencionmetro
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  val=analogRead(Pot); //El valor que vamos a leer del potenciometro se guarda en la variable val
+  Serial.println("Valor: "+val); //Imprime el valor del potenciometro
+  delay(100); 
+}
