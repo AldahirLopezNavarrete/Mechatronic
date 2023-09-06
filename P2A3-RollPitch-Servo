@@ -1,0 +1,37 @@
+#define X 14
+#define Y 12
+#define Z 13
+#include <Servo.h>
+#define servoPin 22
+Servo miservo;
+
+int valX;
+int valY;
+int valZ;
+int angX;
+int angY;
+int anguloServo;
+void setup() {
+  Serial.begin(115200);
+  miservo.attach(servoPin);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  valX=analogRead(X);
+  valY=analogRead(Y);
+  valZ=analogRead(Z);
+  angX=valY/sqrt((valX*valX)+(valZ*valZ));    //Calcula el valor de la rotacion en eje X (Roll)
+  angY=valX/sqrt((valY*valY)+(valZ*valZ));    //Calcula el valor de la rotacion en eje Y (Pitch)
+  Serial.print("X: ");
+  Serial.print(valX);
+  Serial.print("  Y: ");
+  Serial.print(valY);
+  Serial.print("  Z: ");
+  Serial.print(valZ);
+  Serial.print("  Roll: ");
+  Serial.print(angX);
+  Serial.print("  Pitch: ");
+  Serial.print(angY);
+  Serial.println();  
+}
