@@ -1,0 +1,34 @@
+//ADC: Analogic to Digital Convertor
+#define Pot 4
+#define LED 15
+#include <Servo.h>
+#define servoPin 22
+Servo miservo;
+int val;
+
+void setup() {
+
+Serial.begin(115200);
+pinMode(LED,OUTPUT);
+miservo.attach(servoPin);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+val=analogRead(Pot);  //Lee el valor del potenciometro
+Serial.print("ADC: ");
+Serial.println(val);
+if(val==4095){
+  for(int i=0;i<=180;i++){  //Gira de 0 a 180 grados si el valor del potenciometro esta al maximo, es decir, se gira completamente hacia la derecha
+    miservo.write(i);
+    delay(15);
+  }
+}
+if(val==0){
+  for(int i=180;i>=0;i--){  //Gira de 180 a 0 grados si el valor del potenciometro es 0, el potenciometro esta totalmente a la izquierda
+    miservo.write(i);
+    delay(15);
+  }
+}
+
+}
