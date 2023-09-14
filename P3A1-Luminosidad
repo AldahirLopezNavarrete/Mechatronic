@@ -1,0 +1,25 @@
+#define LUM 15
+#define LED 2
+
+int val;
+int brillo;
+
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(115200);
+pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+val=analogRead(LUM);    //Leemos el valor del divisor de voltaje
+brillo = map(val, 0, 1023, 255, 0); //Mapeamos el valor que se le va a asignar al brillo del led
+brillo = constrain(brillo, 0, 255); //Restringe el valor del brillo
+analogWrite(LED, brillo);  //Encendemos el led con el valor del brillo que mapeamos
+Serial.print("Luminosidad: ");
+Serial.print(brillo);
+Serial.print("  Valor del fotoresistor: ");
+Serial.print(val);
+Serial.println();
+delay(100);
+}
