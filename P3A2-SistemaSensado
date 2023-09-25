@@ -1,0 +1,128 @@
+#include <NewPing.h>
+
+//Rutina 1
+#define FC51 36  // Pin donde está conectado el FC-51
+#define LED 2
+#define LED2 22
+#define LED3 23
+#define LED4 21
+#define LED5 18
+#define LED6 4
+#define LED7 19
+
+//TRIGGER ES PIN 25 Y ECHO ES PIN 26
+#define ECHO 26
+#define TRIG 25
+
+//PIN PARA FOTORESISTOR
+#define LUM 15
+
+//Sensores
+#define S1 12
+#define S2 14
+#define S3 27
+
+const int leds[]={19,21,18,4,22,23};
+
+NewPing sonar(TRIG, ECHO);
+void setup() {
+  Serial.begin(115200);
+  // Configurar los pines de los LEDs como salidas
+  pinMode(FC51,INPUT);
+  pinMode(LED,OUTPUT);
+  pinMode(LED2,OUTPUT);
+  pinMode(LED3,OUTPUT);
+  pinMode(LED4,OUTPUT);
+  pinMode(LED5,OUTPUT);
+  pinMode(LED6,OUTPUT);
+  pinMode(LED7,OUTPUT);
+  //Configurar los pines de ECHO Y TRIGGER
+  pinMode(TRIG,OUTPUT);
+  pinMode(ECHO,INPUT);
+  pinMode(LUM, INPUT);
+}
+
+void loop() {
+//--------------------Rutina 1 ---------------------------------
+  //Leer el sensor de obstáculos
+  int ValorFC51 = digitalRead(FC51);
+  if(ValorFC51==0){
+    digitalWrite(LED,(millis() / 200) % 2);
+    digitalWrite(LED2,(millis() / 200) % 2);
+    digitalWrite(LED3,(millis() / 200) % 2);
+    digitalWrite(LED4,(millis() / 200) % 2);
+    digitalWrite(LED5,(millis() / 200) % 2);
+    digitalWrite(LED6,(millis() / 200) % 2);
+    digitalWrite(LED7,(millis() / 200) % 2);
+    Serial.println("Obst: 1 ");
+  }else{
+    digitalWrite(LED,LOW);
+    digitalWrite(LED2,LOW);
+    digitalWrite(LED3,LOW);
+    digitalWrite(LED4,LOW);
+    digitalWrite(LED5,LOW);
+    digitalWrite(LED6,LOW);
+    digitalWrite(LED7,LOW);
+    Serial.println("Obst: 0 ");
+    }
+   delay(100);
+//---------------------------------------------------------------
+//Rutina 2
+    int distancia = sonar.ping_cm();
+    digitalWrite(LED,LOW);
+    digitalWrite(LED2,LOW);
+    digitalWrite(LED3,LOW);
+    digitalWrite(LED4,LOW);
+    digitalWrite(LED5,LOW);
+    digitalWrite(LED6,LOW);
+    digitalWrite(LED7,LOW);
+    int cantidadLuces = min(distancia / 5, 6);
+    for(int i=0;i<cantidadLuces;i++){
+      digitalWrite(leds[i],HIGH);
+    }
+    // Mostrar la distancia en el monitor serial
+    Serial.print("Distancia: ");
+    Serial.print(distancia);
+    Serial.print("  ");
+    Serial.print("Dist: ");
+    for (int i = 0; i < cantidadLuces; i++) {
+      if (i < cantidadLuces) {
+        Serial.print("1 ");
+      } else {
+        Serial.print("0 ");
+      }
+    }
+    Serial.println();
+    delay(100);
+    
+//RUTINA 3 ---------------------------------------------------
+    int ldrValue = analogRead(ldrPin); // Leer el valor del LDR
+
+  // Calcular el porcentaje de luminosidad
+  int luminosityPercentage = map(ldrValue, 0, 1023, 0, 100);
+  
+  // Calcular cuántos LEDs deben estar encendidos
+  int numLedsOn = map(luminosityPercentage, 0, 100, numLeds, 0);
+
+  // Encender los LEDs correspondientes y mostrarlos en el monitor serial
+  Serial.print("Obst: 0   ");
+  Serial.print("Dist: ");
+  for (int i = 0; i < numLeds; i++) {
+    if (i < numLedsOn) {
+      digitalWrite(leds[i], HIGH);
+      Serial.print(1);
+      Serial.print(" ");
+    } else {
+      Serial.print(0);
+      Serial.print(" ");
+      digitalWrite(leds[i], LOW);
+    }
+  }
+  // Mostrar el porcentaje de luminosidad en el monitor serial
+  Serial.print("    Lum: ");
+  Serial.print(luminosityPercentage);
+  Serial.println("%");
+
+
+  delay(200); // Esperar un segundo antes de la siguiente lectura
+}
