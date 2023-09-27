@@ -1,0 +1,84 @@
+#include <BluetoothSerial.h>
+
+BluetoothSerial SerialBT;
+
+const int ledPin1 = 2;    // Pin para el primer LED
+const int ledPin2 = 17;   // Pin para el segundo LED
+const int ledPin3 = 19;   // Pin para el tercer LED
+
+char receivedChar;         // Carácter recibido por Bluetooth
+bool led1State = false;    // Estado del LED 1
+bool led2State = false;    // Estado del LED 2
+bool led3State = false;    // Estado del LED 3
+
+void setup() {
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  pinMode(ledPin3, OUTPUT);
+
+  Serial.begin(115200);
+  SerialBT.begin("ESP32_BT_LED_Control"); // Nombre del dispositivo Bluetooth
+
+  digitalWrite(ledPin1, LOW);
+  digitalWrite(ledPin2, LOW);
+  digitalWrite(ledPin3, LOW);
+}
+
+void loop() {
+  if (SerialBT.available()) {
+    receivedChar = SerialBT.read();
+
+    switch (receivedChar) {
+      case '1':
+        led1State = !led1State; // Cambia el estado del LED 1
+        digitalWrite(ledPin1, led1State ? HIGH : LOW);
+        if (led1State) {
+          Serial.println("LED 1 encendido");
+          SerialBT.println("LED 1 encendido");
+        } else {
+          Serial.println("LED 1 apagado");
+          SerialBT.println("LED 1 apagado");
+        }
+        break;
+
+      case '2':
+        led2State = !led2State; // Cambia el estado del LED 2
+        digitalWrite(ledPin2, led2State ? HIGH : LOW);
+        if (led2State) {
+          Serial.println("LED 2 encendido");
+          SerialBT.println("LED 2 encendido");
+        } else {
+          Serial.println("LED 2 apagado");
+          SerialBT.println("LED 2 apagado");
+        }
+        break;
+
+      case '3':
+        led3State = !led3State; // Cambia el estado del LED 3
+        digitalWrite(ledPin3, led3State ? HIGH : LOW);
+        if (led3State) {
+          Serial.println("LED 3 encendido");
+          SerialBT.println("LED 3 encendido");
+        } else {
+          Serial.println("LED 3 apagado");
+          SerialBT.println("LED 3 apagado");
+        }
+        break;
+
+      case '4':
+        digitalWrite(ledPin1, LOW);
+        digitalWrite(ledPin2, LOW);
+        digitalWrite(ledPin3, LOW);
+        led1State = false;
+        led2State = false;
+        led3State = false;
+        Serial.println("Todos los LEDs apagados");
+        SerialBT.println("Todos los LEDs apagados");
+        break;
+
+      default:
+        Serial.println("Comando no reconocido");
+        SerialBT.println("Comando no reconocido");
+    }
+  }
+}   
