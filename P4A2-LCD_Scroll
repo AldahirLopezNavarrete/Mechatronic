@@ -1,0 +1,39 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+char nombre1[] = "Gustavo Escobar";  // Nombre del primer integrante
+char nombre2[] = "Aldahir Lopez";  // Nombre del segundo integrante
+int velocidadDesplazamiento = 500;  // Velocidad de desplazamiento en milisegundos
+
+void setup() {
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(16, 0);
+  lcd.print(nombre1);
+  lcd.setCursor(16, 1);
+  lcd.print(nombre2);
+}
+
+void loop() {
+  for (int i = 0; i < 16; i++) {
+    lcd.scrollDisplayLeft();
+    delay(velocidadDesplazamiento);
+  }
+  delay(60000);  // Espera 2 segundos antes de reiniciar
+}
+
+void scrollText(char texto[]) {
+  int textoLen = strlen(texto);
+  for (int i = 0; i < textoLen + 16; i++) {
+    lcd.clear();
+    int startPos = max(0, 16 - i);  // Posición de inicio del desplazamiento
+    lcd.setCursor(startPos, 0);
+    int endPos = min(textoLen, startPos + 16);  // Posición de finalización del desplazamiento
+    for (int j = startPos; j < endPos; j++) {
+      lcd.print(texto[j]);
+    }
+    delay(velocidadDesplazamiento);
+  }
+} 
