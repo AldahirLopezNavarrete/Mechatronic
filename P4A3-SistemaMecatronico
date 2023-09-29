@@ -1,0 +1,66 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Servo.h>
+#include <math.h> // Necesario para la funciÃ³n sqrt()
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // DirecciÃ³n I2C y tamaÃ±o del LCD (16x2)
+Servo servo;
+
+const int xPin = 36; // Pin donde estÃ¡ conectado el acelerÃ³metro en el eje X
+const int yPin = 39; // Pin donde estÃ¡ conectado el acelerÃ³metro en el eje Y
+const int zPin = 34; // Pin donde estÃ¡ conectado el acelerÃ³metro en el eje Z
+const int servoPin = 4; // Pin donde estÃ¡ conectado el servo
+
+void setup() {
+  Serial.begin(115200);
+  lcd.init();
+  lcd.backlight();
+  servo.attach(servoPin);
+  servo.write(90); // Inicializa el servo en posiciÃ³n central (90 grados)
+  pinMode(xPin, INPUT);
+  pinMode(yPin, INPUT);
+  pinMode(zPin, INPUT);
+}
+
+void loop() {
+  // Lee los valores del acelerÃ³metro en los ejes X, Y y Z
+  int xValue = analogRead(xPin);
+  int yValue = analogRead(yPin);
+  int zValue = analogRead(zPin);
+  Serial.print("X: ");
+  Serial.println(xValue);
+  Serial.print("Y: ");
+  Serial.println(yValue);
+  Serial.print("Z: ");
+  Serial.println(zValue);
+
+  // Calcula el Ã¡ngulo de roll en funciÃ³n de los valores de X, Y y Z
+  float rollAngle = degrees(atan(yValue/sqrt((zValue*zValue)+(xValue*xValue))));
+  Serial.println(rollAngle);
+  // Mapea el Ã¡ngulo de roll al Ã¡ngulo del servo segÃºn la tabla proporcionada
+  if (rollAngle < -89) {
+    rollAngle = -90;
+  } else if (rollAngle >= -89 && rollAngle <= -1) {
+    rollAngle = map(rollAngle, -89, -1, 1, 89);
+  } else if (rollAngle == 0) {
+    rollAngle = 90;
+  } else if (rollAngle >= 1 && rollAngle <= 89) {
+    rollAngle = map(rollAngle, 1, 89, 91, 179);
+  } else {
+    rollAngle = 180;
+  }
+
+  // Controla el servo
+  servo.write(rollAngle);
+
+  // Muestra informaciÃ³n en la pantalla LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Sist.Mecatronico");
+  lcd.setCursor(0, 1);
+  lcd.print("Angulo: ");
+  lcd.print(rollAngle);
+  lcd.print("Â°");
+
+  delay(100); // PequeÃ±a pausa para evitar actualizaciones demasiado rÃ¡pidas
+}
