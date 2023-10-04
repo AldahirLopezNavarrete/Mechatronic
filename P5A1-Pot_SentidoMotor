@@ -1,0 +1,51 @@
+#define EnM 13
+#define MA 12
+#define MB 14
+#define POT 27
+
+
+int channel=0;
+int freq=1000;
+int resolution=12;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(EnM, OUTPUT);
+  pinMode(MA, OUTPUT);
+  pinMode(MB,OUTPUT);
+  pinMode(POT,INPUT);
+  ledcSetup(channel,freq,resolution);
+  ledcAttachPin(EnM,channel);
+  Serial.begin(115200);
+  
+}
+
+void loop() {
+  int pot = analogRead(POT);
+  float voltaje = pot * (3.3 / 4095.0); // Convertir valor a voltaje (0-3.3V)
+  Serial.print("Voltaje: ");
+  Serial.print(voltaje);
+  if(voltaje>=0 && voltaje<1.32){
+    ledcWrite(channel,2000);
+    //Movimiento Levogiro
+    Serial.println(" V --- Levógiro");
+    digitalWrite(EnM,HIGH);
+    digitalWrite(MA,HIGH);
+    digitalWrite(MB,LOW);
+  }
+  if(voltaje>=1.32 && voltaje<=1.98){
+    ledcWrite(channel,0);
+    Serial.println(" V --- Detenido");
+    digitalWrite(EnM,LOW);
+    digitalWrite(MA,HIGH);
+    digitalWrite(MB,LOW);
+  }
+  if(voltaje>1.98 && voltaje<=3.3){
+    ledcWrite(channel,2000);
+    Serial.println(" V --- Dextrógiro");
+    digitalWrite(EnM,HIGH);
+    digitalWrite(MA,LOW);
+    digitalWrite(MB,HIGH);
+  }
+}  
