@@ -1,0 +1,66 @@
+#define EnM 13
+#define MA 12
+#define MB 14
+#define POT 27
+
+
+int channel=0;
+int freq=1000;
+int resolution=12;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(EnM, OUTPUT);
+  pinMode(MA, OUTPUT);
+  pinMode(MB,OUTPUT);
+  pinMode(POT,INPUT);
+  ledcSetup(channel,freq,resolution);
+  ledcAttachPin(EnM,channel);
+  Serial.begin(115200);
+  
+}
+
+void loop() {
+  int pot = analogRead(POT);
+  float voltaje = pot * (3.3 / 4095.0); // Convertir valor a voltaje (0-3.3V)
+  if(voltaje>=0 && voltaje<1.32){
+    int velocidad = map(pot, 4095, 0, 0, 4000);
+    int porcentaje = map(velocidad, 0, 4000, 0, 100);
+    Serial.print("Voltaje: ");
+    Serial.print(voltaje);
+    Serial.print("V --- Levógiro --- ");
+    Serial.print(porcentaje);
+    Serial.print(" %");
+    ledcWrite(channel,velocidad);
+    //Movimiento Levogiro
+    digitalWrite(EnM,HIGH);
+    digitalWrite(MA,HIGH);
+    digitalWrite(MB,LOW);
+  }
+  if(voltaje>=1.32 && voltaje<=1.98){
+    //Detenido
+    Serial.print("Voltaje: ");
+    Serial.print(voltaje);
+    Serial.print(" V");
+    Serial.println(" --- Detenido");
+    ledcWrite(channel,0);
+    digitalWrite(EnM,LOW);
+    digitalWrite(MA,HIGH);
+    digitalWrite(MB,LOW);
+  }
+  if(voltaje>1.98 && voltaje<=3.3){
+    int velocidad = map(pot, 0, 4095,0, 4000);
+    int porcentaje = map(velocidad, 0, 4000, 0, 100);
+    Serial.print("Voltaje: ");
+    Serial.print(voltaje);
+    Serial.print("V --- Dextrogiro --- ");
+    Serial.print(porcentaje);
+    Serial.print(" %");
+    ledcWrite(channel,velocidad);
+    //Movimiento Dextrogiro
+    digitalWrite(EnM,HIGH);
+    digitalWrite(MA,LOW);
+    digitalWrite(MB,HIGH);
+  }
+}  
