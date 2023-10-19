@@ -1,0 +1,51 @@
+#define Rojo 17
+#define Amarillo 16
+#define Verde 4
+#define ButLed 2
+#define Button 23
+#define Button2 22
+
+int factor = 1;
+int tiempo = 20;
+int buttonstate;
+int limite=1;
+//Esta funcion va antes del setup, si va despues no va a funcionar
+void IRAM_ATTR ISR(){
+  Serial.println("Botón presionado");
+  factor++;
+}
+
+void IRAM_ATTR ISR2(){
+  Serial.println("Segundo botón presionado");
+  factor--;
+  if (factor < limite) {
+    factor = limite;
+  }
+}
+
+void setup() {
+  pinMode(Rojo, OUTPUT);
+  pinMode(Amarillo, OUTPUT);
+  pinMode(Verde, OUTPUT);
+  pinMode(ButLed, OUTPUT);
+  pinMode(Button, INPUT);
+  pinMode(Button2,INPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(Button),ISR,RISING);
+  attachInterrupt(digitalPinToInterrupt(Button2),ISR2,RISING);
+
+  Serial.begin(115200);
+}
+
+void loop() {
+  digitalWrite(Rojo, LOW);
+  digitalWrite(Verde, HIGH);
+  delay(factor*tiempo);
+  digitalWrite(Verde, LOW);
+  digitalWrite(Amarillo, HIGH);
+  delay(factor*tiempo);
+  digitalWrite(Amarillo, LOW);
+  digitalWrite(Rojo, HIGH);
+  delay(factor*tiempo);
+  Serial.println(factor*tiempo);
+}
