@@ -1,0 +1,83 @@
+#include <Arduino.h>
+
+#define IN1 23
+#define IN2 22 
+#define ENA 21 
+#define ENC_A 18
+#define ENC_B 19
+
+#define PPR 400 // Pulsos por revolución
+
+volatile int pulsos = 0;
+int ultimoEstadoA = LOW;
+unsigned long ultimoTiempo = 0;
+
+void setup() {
+  Serial.begin(9600);
+  
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENA, OUTPUT);
+  pinMode(ENC_A, INPUT);
+  pinMode(ENC_B, INPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(ENC_A), leerEncoder, CHANGE);
+}
+
+void loop() {
+  // Ajuste de la velocidad del motor en distintos porcentajes
+  int velocidades[] = {26, 77, 128, 255, 0}; // aproximaciones de 10%, 30%, 50% y 100% de 255 (PWM)
+
+  for (int i = 0; i < 5; i++) {
+    analogWrite(ENA, velocidades[i]);  
+    digitalWrite(IN1, LOW);  
+    digitalWrite(IN2, HIGH);  
+    
+    unsigned long tiempoInicio = millis();
+    while (millis() - tiempoInicio < 3000) {
+      if (millis() - ultimoTiempo >= 100) {
+        mostrarDatos();
+        ultimoTiempo = millis();
+      }
+    }
+  }
+}
+
+void leerEncoder() {
+  int estadoA = digitalRead(ENC_A);
+  int estadoB = digitalRead(ENC_B);
+  
+  if (estadoA != ultimoEstadoA) {
+    if (estadoB != estadoA) {
+      pulsos++;
+    } else {
+      pulsos--;
+    }
+  }
+  ultimoEstadoA = estadoA;
+}
+
+void mostrarDatos() {
+  float angulo = (float(pulsos) / PPR) * 360.0;  // Cálculo del ángulo
+  angulo = fmod(angulo, 360.0);  // Para mantener el ángulo entre 0 y 359 grados
+  float w_rps = float(pulsos) / (PPR * 0.1);     // Cálculo de velocidad en rps (cada 100ms = 0.1s)
+  float w_rpm = w_rps * 60.0;    // Cálculo de velocidad en rpm
+  float w_rad = w_rps * 2 * PI;  // Cálculo de velocidad en rad/s
+
+  Serial.print("Pulsos: "); 
+  Serial.print(pulsos);
+  Serial.print(" --- Ángulo: ");
+  Serial.print(angulo); 
+  Serial.print("°");
+  Serial.print(" --- W: ");
+  Serial.print(w_rps); 
+  Serial.print(" [rps]");
+  Serial.print(" --- ");
+  Serial.print(w_rpm); 
+  Serial.print(" [rpm]");
+  Serial.print(" --- "); 
+  Serial.print(w_rad);
+  Serial.println(" [rad/s]");
+
+  pulsos = 0;  // Restablecer el contador de pulsos para la próxima medición
+}
